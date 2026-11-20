@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('bids', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('project_id')->constrained('projects')->cascadeOnDelete();
+            $table->foreignId('developer_id')->constrained('users')->cascadeOnDelete();
+            $table->unsignedBigInteger('harga_tawaran');
+            $table->unsignedInteger('estimasi_hari');
+            $table->text('proposal');
+            $table->enum('status', ['menunggu', 'diterima', 'ditolak'])->default('menunggu');
             $table->timestamps();
         });
     }
