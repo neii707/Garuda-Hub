@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    color: #0f172a;
+}
+
+.auth-wrapper {
+    width: 100%;
+    max-width: 460px;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 40px 36px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+}
+
+.brand-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.brand-badge {
+    display: inline-block;
+    background: #fef2f2;
+    color: #dc2626;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+
+.brand-header h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 6px;
+}
+
+.brand-header p {
+    font-size: 14px;
+    color: #64748b;
+}
+
+.alert-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 6px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #0f172a;
+    transition: all 0.2s ease;
+    background: #f8fafc;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #dc2626;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 13px;
+    background: #dc2626;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    margin-top: 6px;
+}
+
+.btn-primary:hover {
+    background: #b91c1c;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 22px;
+    font-size: 14px;
+    color: #64748b;
+}
+
+.auth-footer a {
+    color: #dc2626;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
