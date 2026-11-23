@@ -10,31 +10,23 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
+        $u = Auth::user();
+        abort_if($u->role === 'admin', 403);
 
-        if ($user->role === 'admin') {
-            return redirect()->route('admin.index');
-        }
-
-        if ($user->role === 'klien') {
-            $projects = Project::with(['bids.developer', 'pemenangBid.developer'])
-                ->where('klien_id', $user->id)
-                ->latest()
+        if ($u->role === 'klien') {
+            $projects = Project::withCount('bids')
+                ->where('client_id', $u->id)
+                ->orderByDesc('id')
                 ->get();
 
-            return view('klien.dashboard', compact('user', 'projects'));
+            return view('klien.dashboard', compact('projects'));
         }
 
-        $myBids = Bid::with(['project.klien'])
-            ->where('developer_id', $user->id)
-            ->latest()
+        $bids = Bid::with(['project.klien'])
+            ->where('developer_id', $u->id)
+            ->orderByDesc('id')
             ->get();
 
-        $openProjects = Project::with(['klien', 'bids'])
-            ->where('status', 'terbuka')
-            ->latest()
-            ->get();
-
-        return view('developer.dashboard', compact('user', 'myBids', 'openProjects'));
+        return view('developer.dashboard', compact('bids'));
     }
 }

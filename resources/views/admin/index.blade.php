@@ -1,99 +1,75 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Garuda-Hub</title>
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-</head>
-<body>
-    <nav class="navbar">
-        <a href="{{ route('home') }}" class="navbar-brand">Garuda<span>Hub</span> Admin</a>
-        <div class="nav-links">
-            <a href="{{ route('home') }}">Lihat Situs</a>
-            <form action="{{ route('logout') }}" method="POST" style="display:inline;">
-                @csrf
-                <button type="submit" class="btn btn-outline btn-sm">Keluar</button>
-            </form>
-        </div>
-    </nav>
+@extends('layouts.app')
+@section('title', 'Admin')
 
-    <main class="container">
-        <h2 style="margin-bottom:20px;">Panel Administrator Garuda-Hub</h2>
+@section('content')
+<div class="card"><h1>Admin</h1></div>
 
-        @if (session('success'))
-            <div class="alert-success">{{ session('success') }}</div>
-        @endif
+<div class="card">
+    <h2>Kelola User</h2>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Nama</th>
+            <th>Email</th>
+            <th>Peran</th>
+            <th>Aksi</th>
+        </tr>
+        @foreach($users as $r)
+        <tr>
+            <td>{{ $r->id }}</td>
+            <td>{{ $r->nama }}</td>
+            <td>{{ $r->email }}</td>
+            <td>{{ $r->role }}</td>
+            <td>
+                @if($r->id === auth()->id())
+                    <span class="muted">(akun Anda)</span>
+                @else
+                    <form class="inline" method="POST" action="{{ route('admin.users.role', $r->id) }}">
+                        @csrf
+                        <select name="role">
+                            @foreach(['klien', 'developer', 'admin'] as $ro)
+                                <option value="{{ $ro }}" {{ $ro === $r->role ? 'selected' : '' }}>{{ $ro }}</option>
+                            @endforeach
+                        </select>
+                        <button class="sm" type="submit">Ubah</button>
+                    </form>
+                    <form class="inline" method="POST" action="{{ route('admin.users.destroy', $r->id) }}" onsubmit="return confirm('Hapus user beserta proyek dan penawarannya?')">
+                        @csrf
+                        @method('DELETE')
+                        <button class="sm sec" type="submit">Hapus</button>
+                    </form>
+                @endif
+            </td>
+        </tr>
+        @endforeach
+    </table>
+</div>
 
-        <div class="card" style="margin-bottom:28px;">
-            <h3>Manajemen Pengguna ({{ $users->count() }})</h3>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nama</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($users as $u)
-                            <tr>
-                                <td>{{ $u->nama }}</td>
-                                <td>{{ $u->email }}</td>
-                                <td><span class="badge badge-cat">{{ strtoupper($u->role) }}</span></td>
-                                <td>
-                                    @if ($u->id !== Auth::id())
-                                        <form action="{{ route('admin.users.destroy', $u) }}" method="POST" onsubmit="return confirm('Hapus pengguna ini?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-red btn-sm">Hapus</button>
-                                        </form>
-                                    @else
-                                        <small style="color:#64748b;">Akun Aktif</small>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="card">
-            <h3>Semua Proyek Lelang ({{ $projects->count() }})</h3>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Judul</th>
-                            <th>Klien</th>
-                            <th>Anggaran</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($projects as $p)
-                            <tr>
-                                <td>{{ $p->judul }}</td>
-                                <td>{{ $p->klien->nama }}</td>
-                                <td>Rp {{ number_format($p->anggaran, 0, ',', '.') }}</td>
-                                <td>{{ strtoupper($p->status) }}</td>
-                                <td>
-                                    <form action="{{ route('projects.destroy', $p) }}" method="POST" onsubmit="return confirm('Hapus proyek ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-red btn-sm">Hapus</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </main>
-</body>
-</html>
+<div class="card">
+    <h2>Kelola Proyek</h2>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Judul</th>
+            <th>Klien</th>
+            <th>Status</th>
+            <th>Aksi</th>
+        </tr>
+        @foreach($projects as $p)
+        <tr>
+            <td>{{ $p->id }}</td>
+            <td><a href="{{ route('projects.show', $p->id) }}">{{ $p->judul }}</a></td>
+            <td>{{ $p->klien?->nama ?? '-' }}</td>
+            <td><span class="badge {{ $p->status === 'terbuka' ? 'open' : 'closed' }}">{{ $p->status }}</span></td>
+            <td>
+                <form class="inline" method="POST" action="{{ route('admin.projects.destroy', $p->id) }}" onsubmit="return confirm('Hapus proyek beserta penawarannya?')">
+                    @csrf
+                    @method('DELETE')
+                    <button class="sm sec" type="submit">Hapus</button>
+                </form>
+            </td>
+        </tr>
+        @endforeach
+    </table>
+</div>
+@endsection

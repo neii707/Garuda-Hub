@@ -9,22 +9,16 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Project::with(['klien', 'bids'])->latest();
+        $q = mb_substr(trim((string)$request->query('q', '')), 0, 100);
 
-        if ($request->filled('q')) {
-            $keyword = $request->q;
-            $query->where(function ($q) use ($keyword) {
-                $q->where('judul', 'like', "%{$keyword}%")
-                  ->orWhere('deskripsi', 'like', "%{$keyword}%")
-                  ->orWhere('kategori', 'like', "%{$keyword}%");
-            });
-        }
-
-        if ($request->filled('kategori')) {
-            $query->where('kategori', $request->kategori);
-        }
-
-        $projects = $query->get();
+        $projects = Project::with(['klien', 'bids'])
+            ->when($q !== '', function ($query) use ($q) {$like = '%' . addcslashes($q, '\\%_') . '\%';$query->where(function ($sub) use ($like) {
+                    $sub->where('judul', 'like',$like)
+                        ->orWhere('kategori', 'like', $like);
+                });
+            })
+            ->orderByDesc('id')
+            ->get();
 
         return view('home', compact('projects'));
     }
